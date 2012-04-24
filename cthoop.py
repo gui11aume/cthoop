@@ -3,4 +3,5 @@
 
 class Plasmid():
     print 'I made a change'
+    print 'One more change'
     pass
