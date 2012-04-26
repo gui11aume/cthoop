@@ -4,6 +4,8 @@
 # You can write a 'cut(self, RE_site)' method that returns a
 # list with the length of the fragments.
 
+import re
+
 class Plasmid:
     #class variables
     
@@ -13,6 +15,12 @@ class Plasmid:
         
     def cut(self, RE_site):
         fragments = self.sequence.split(RE_site)
+        fragments[0] += RE_site
+        n = len(fragments)
+        L = fragments[n-1]
+        fragments[n-1] = L[::-1] 
+        fragments[0] += fragments[n-1]
+        del(fragments[n-1])
         return fragments
     
     def number_of_fr(self, RE_site):
