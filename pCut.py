@@ -17,9 +17,8 @@ class Plasmid:
         fragments = self.sequence.split(RE_site)
         fragments[0] += RE_site
         n = len(fragments)
-        L = fragments[n-1]
-        fragments[n-1] = L[::-1] 
-        fragments[0] += fragments[n-1]
+        fragments[n-1] += fragments[0]
+        fragments[0] = fragments[n-1]
         del(fragments[n-1])
         return fragments
     
