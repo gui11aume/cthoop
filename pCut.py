@@ -15,11 +15,13 @@ class Plasmid:
         
     def cut(self, RE_site):
         fragments = self.sequence.split(RE_site)
-        fragments[0] += RE_site
         n = len(fragments)
+        for x in range (n-1):
+            fragments[x] += RE_site
         fragments[n-1] += fragments[0]
         fragments[0] = fragments[n-1]
         del(fragments[n-1])
+        
         return fragments
     
     def number_of_fr(self, RE_site):
