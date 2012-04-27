@@ -28,9 +28,8 @@ class Plasmid:
         
     def fr_length(self, RE_site):
         x = self.cut(RE_site)
-        for string in x:
-            print len(string)
-        return 
+        # Use list comprehension.
+        return [len(string) for string in x]
     
 
     
