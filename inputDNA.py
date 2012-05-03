@@ -1,11 +1,19 @@
 # -*- coding:utf-8 -*-
 
+
 import re
 
 class Reader():
+# TODO: Perform a sequence check when a Reader instance is created.
+# If the file contains non DNA letters, raise an Exception.
 
    def __init__(self, file_name):
       self.file = open(file_name)
+
+   def __del__(self):
+      """Ensure that file is properly closed when the Reader
+      instance is destroyed."""
+      self.file.close()
   
    def read(self):
       self.file.seek(0)
@@ -13,6 +21,8 @@ class Reader():
     
 class Reader_fasta(Reader):
    """A class checking a input sequence in a fasta file"""
+
+   # TODO: make sure that the method read returns uppercase sequence.
 
    #Class variables
    correct_nucleotide = "ATCGN"
