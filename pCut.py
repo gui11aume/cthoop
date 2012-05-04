@@ -47,10 +47,9 @@ class Plasmid:
         fragments = new_fragments + fragments
         return fragments
         
-    def fr_length(self, RE_site):
-        x = self.cut(RE_site)
-        return [len(string) for string in x]
-        #stg
+    def get_sizes(self, RE_site):
+        """Return a list with fragment size."""
+        return [len(frag) for frag in self.cut_(RE_site)]
     
     def cut_(self, RE_site):
         """Return a list of plasmid fragments delimited by the
