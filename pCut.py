@@ -62,4 +62,4 @@ class Plasmid:
            return [ frag + RE_site for frag in \
                       (2*self.sequence)[start:end].split(RE_site) ]
         except ValueError:
-           return None
+           return []
