@@ -17,8 +17,8 @@ if __name__ == '__main__':
    sizes = sorted(pCut.Plasmid(input_seq).get_sizes(RE_site), reverse=True)
    if sizes:
       output = prettytable.PrettyTable()
-      output.add_column("Fragment", range(1, 1+len(sizes)))
-      output.add_column("Size", sizes)
+      output.add_column('Fragment', range(1, 1+len(sizes)))
+      output.add_column('Size', sizes)
       output.printt()
    else:
-      sys.stdout.write("No site found.")
+      sys.stdout.write('No site found.\n')
