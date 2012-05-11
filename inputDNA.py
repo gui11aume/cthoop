@@ -32,10 +32,27 @@ class DNAReader(Reader):
    def readon(self):
       return self.file.read().replace("\n", "").replace("\r", "").upper()
 
+   def selection(self):
+      """Categorise the correct file format regarding the given sequence."
+      self.file.seek(0)
+      start = self.file.readline().upper()
+      if start[0] == ">":
+         print "Input file belongs to the fasta file."
+      elif start[0:2] == "ID" and start[-1] == "//":
+         print "Input file belongs to the EMBL file."
+      elif start[0:5] == "LOCUS":
+         print "Input file belongs to the GenBank file."
+      elif start[0] == ";":
+         print "Input file belongs to the IG file."
+      elif re.search('[^GATCN]', start[0:-1]) == 0:
+         print "Input file belongs to the plain file."
+      else:
+         print "No corret file format is found."
+      return
+
    def check(self):
       if re.search('[^GATCN]', self.read()):
          raise Exception ('Not a DNA sequence')
-
     
 class FastaReader(DNAReader):
    """A class checking a input sequence in a fasta file"""
