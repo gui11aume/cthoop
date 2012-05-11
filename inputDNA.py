@@ -32,6 +32,7 @@ class DNAReader(Reader):
    def readon(self):
       return self.file.read().replace("\n", "").replace("\r", "").upper()
 
+<<<<<<< HEAD
    def selection(self):
       """Categorise the correct file format regarding the given sequence."
       self.file.seek(0)
@@ -53,6 +54,12 @@ class DNAReader(Reader):
    def check(self):
       if re.search('[^GATCN]', self.read()):
          raise Exception ('Not a DNA sequence')
+=======
+   def check(self):
+      if re.search('[^GATCN]', self.read()):
+         raise Exception ('Not a DNA sequence')
+
+>>>>>>> 413b8f5c3ea57ae1a0668ff065dcbdfaf1a31cd3
     
 class FastaReader(DNAReader):
    """A class checking a input sequence in a fasta file"""

@@ -8,6 +8,10 @@ import re
 
 class Plasmid:
     #class variables
+    restriction_enzymes = {'Cla1' : 'AT^CGAT' , 'BamH1': 'GG^ATCC', 'Bgl II': 'A^GATCT'
+                           , 'Dra1':'TTT^AAA' , 'EcoR1':'G^AATTC' , 'EcoRV':'GAT^ATC'
+                           , 'HindIII':'A^AGCTT' , 'Pst1':'CTGCA^G' , 'Sal I':'G^TCGAC'
+                           , 'SmaI':'CCC^GGG' , 'XmaI':'C^CCGGG'}
     
     #class methods
     def __init__(self, sequence, check_and_fmt=True):
@@ -50,6 +54,7 @@ class Plasmid:
     def get_sizes(self, RE_site):
         """Return a list with fragment size."""
         return [len(frag) for frag in self.cut_(RE_site)]
+<<<<<<< HEAD
     
     def cut_(self, RE_site):
         """Return a list of plasmid fragments delimited by the
@@ -63,3 +68,35 @@ class Plasmid:
                       (2*self.sequence)[start:end].split(RE_site) ]
         except ValueError:
            return []
+=======
+    
+    def cut_(self, RE_site):
+        """Return a list of plasmid fragments delimited by the
+        specified RE_site, and empty list if no site is found."""
+        try:
+           # Change plasmid offset (early exit if no RE site found).
+           start = (2*self.sequence).index(RE_site) + len(RE_site)
+           end = start + len(self.sequence) - len(RE_site)
+           # Use list comprehension to add site sequence to fragments.
+           return [ frag + RE_site for frag in \
+                      (2*self.sequence)[start:end].split(RE_site) ]
+        except ValueError:
+           return []
+    
+    def RE_name(self, RE_name):
+        # to call the method from the same object: self.cut_(...)
+        x = self.restriction_enzymes[RE_name].replace('^' , '')
+        if self.sequence.find(x) < 0:
+           print "There is no restristion enzyme site in your sequence"
+        else:
+            M = self.restriction_enzymes[RE_name].split('^')
+            y = self.sequence.split(x)
+            #for i in [len(x)]: #self.sequence.len(x)]:
+            y[0] += M[0]
+            y[1] = M[1] + y[1]
+            print y[0]
+            print y[1]
+        return None
+    
+   
+>>>>>>> 413b8f5c3ea57ae1a0668ff065dcbdfaf1a31cd3
