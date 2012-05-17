@@ -24,7 +24,6 @@ class Reader():
       return self.readon()
 
 
-
 class DNAReader(Reader):
    """Implements a 'check' method to make sure that the content
    of the file is a pure DNA sequence."""
@@ -54,10 +53,9 @@ class DNAReader(Reader):
       if re.search('[^GATCN]', self.read()):
          raise Exception ('Not a DNA sequence')
 
-
     
 class FastaReader(DNAReader):
-   """A class checking a input sequence in a fasta file"""
+   """A class checking an input sequence in a fasta file"""
 
    #Class variables
    correct_nucleotide = "ATCGN"
@@ -80,6 +78,22 @@ class FastaReader(DNAReader):
          if not letter in self.correct_nucleotide:
             print "The given sequence contains wrong nucleotides."
       return
+
+class EMBLReader(DNAReader):
+   """A class checking an input sequence in a EMBL file"""
+
+   #Class variables
+   correct_nucleotide = "ATCGN"
+
+   #Class methods
+      
+   def read_seq(self):≈
+      fc = self.file.read()
+      # Substring from after "ORIGIN" till end of file.
+      fc_start = fc[fc.index('ORIGIN')+6:]
+      fc_nucleotide = re.findall([GATCN]+,fc_start)
+      fc_seq = "".join(fc_nucleotide[:])
+      return fc_seq
 
 
 if __name__ == '__main__':
