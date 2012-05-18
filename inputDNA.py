@@ -28,34 +28,64 @@ class DNAReader(Reader):
    """Implements a 'check' method to make sure that the content
    of the file is a pure DNA sequence."""
 
-   def readon(self):
-      return self.file.read().replace("\n", "").replace("\r", "").upper()
+   #def readon(self):
+   #  return self.file.read().replace("\n", "").replace("\r", "").upper()
 
    def selection(self):
-      """Categorise the correct file format regarding the given sequence."
+      """Categorise the correct file format regarding the given sequence."""
       self.file.seek(0)
       start = self.file.readline().upper()
       if start[0] == ">":
          print "This is a fasta file."
-      elif start[0:1] == "ID" and start[-1] == "//":
-         print "This is an EMBL file."
-      elif start[0:1] == "ID" and start[-1] != "//":
-         print "This is a GCG file.""
+         self.file_type = "fasta"
+      elif start[0:1] == "ID"
+         print "This is an EMBL or GCG file."
+         self.file_type = "embl_gcg"
       elif start[0:5] == "LOCUS":
          print "This is a GenBank file."
+         self.file_type = "genbank"
       elif start[0] == ";":
          print "This is an IG file."
+         self.file_type = "ig"
       elif re.search('[^GATCN]', start[0:-1]) == 0:
          print "This is a plain file."
+         self.file_type = "plain"
       else:
          print "No corret file format is found."
-      return
+         self.file_type = None
+      return self.file_type
 
    def check(self):
       if re.search('[^GATCN]', self.read()):
          raise Exception ('Not a DNA sequence')
 
+   def read_fasta(self):
+      pass
+
+   def read_embl_gcg(self):
+      pass
+
+   def read_genbank(self):
+      fc = self.file.read()
+      # Substring from after "ORIGIN" till end of file.
+      fc_start = fc[fc.index('ORIGIN')+6:]
+      fc_nucleotide = re.findall([GATCN]+,fc_start)
+      fc_seq = "".join(fc_nucleotide[:])
+      return fc_seq
+
+   # etc...
+
+   def read(self):
+      if self.file_type == "fasta":
+         return self.read_fasta()
+      if self.file_type == "embl_gcg":
+         return self.read_embl_gcg()
+      if self.file_type == "genbank":
+         return self.read_genbank()
+
+      # etc...
     
+
 class FastaReader(DNAReader):
    """A class checking an input sequence in a fasta file"""
 
@@ -126,7 +156,7 @@ class GenBankReader(DNAReader):
 
    #Class methods
       
-   def seq_read(self):≈
+   def seq_read(self):
       fc = self.file.read()
       # Substring from after "ORIGIN" till end of file.
       fc_start = fc[fc.index('ORIGIN')+6:]
