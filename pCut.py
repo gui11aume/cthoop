@@ -54,7 +54,6 @@ class Plasmid:
     def get_sizes(self, RE_site):
         """Return a list with fragment size."""
         return [len(frag) for frag in self.cut_(RE_site)]
-<<<<<<< HEAD
     
     def cut_(self, RE_site):
         """Return a list of plasmid fragments delimited by the
@@ -68,9 +67,8 @@ class Plasmid:
                       (2*self.sequence)[start:end].split(RE_site) ]
         except ValueError:
            return []
-=======
     
-    def cut_(self, RE_site):
+    def cut_2(self, RE_site):
         """Return a list of plasmid fragments delimited by the
         specified RE_site, and empty list if no site is found."""
         try:
@@ -97,6 +95,3 @@ class Plasmid:
             print y[0]
             print y[1]
         return None
-    
-   
->>>>>>> 413b8f5c3ea57ae1a0668ff065dcbdfaf1a31cd3

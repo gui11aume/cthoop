@@ -10,10 +10,7 @@ import pCut
 if __name__ == '__main__':
    # Gather user parameters.
    (plasmid_file, RE_site) = sys.argv[1:]
-   try:
-      input_seq = inputDNA.DNAReader(plasmid_file).read()
-   except:
-      input_seq = inputDNA.FastaReader(plasmid_file).read()
+   input_seq = inputDNA.DNAReader(plasmid_file).read()
    sizes = sorted(pCut.Plasmid(input_seq).get_sizes(RE_site), reverse=True)
    if sizes:
       output = prettytable.PrettyTable()
