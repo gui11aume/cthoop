@@ -60,33 +60,47 @@ class DNAReader(Reader):
          raise Exception ('Not a DNA sequence')
 
    def read_fasta(self):
-      pass
+      fc = self.file.read().upper()
+      fc_nucleotide = re.finall([GATCN]+,fc)
+      fc_seq = "".join.(fc_nucleotide[:])
+      return fc_seq
 
    def read_embl_gcg(self):
-      pass
+      fc = self.file.read().upper()
+      fc_start = fc[fc.index("SQ")+2:]
+      fc_nucleotide = re.findall([GATCN]+,fc_start)
+      fc_seq = "".join(fc_nucleotide[:])
+      return fc_seq
 
    def read_genbank(self):
-      fc = self.file.read()
+      fc = self.file.read().upper()
       # Substring from after "ORIGIN" till end of file.
       fc_start = fc[fc.index('ORIGIN')+6:]
       fc_nucleotide = re.findall([GATCN]+,fc_start)
       fc_seq = "".join(fc_nucleotide[:])
       return fc_seq
 
-   # etc...
+   def read_ig(self):
+      fc = self.file.read().replace(";","").repace("comment","").upper()
+      fc_seq = re.findall([GATCN]+,fc)
+      return fc_seq
+
+   def read_plain(self):
+      return self.file.read()
 
    def read(self):
       if self.file_type == "fasta":
          return self.read_fasta()
-      if self.file_type == "embl_gcg":
+      elif self.file_type == "embl_gcg":
          return self.read_embl_gcg()
-      if self.file_type == "genbank":
+      elif self.file_type == "genbank":
          return self.read_genbank()
+      elif self.file_type == "ig":
+         return self.read_ig()
+      elif self.file_type == "plain":
+         return self.read_plain
 
-      # etc...
-    
-
-class FastaReader(DNAReader):
+#class FastaReader(DNAReader):
    """A class checking an input sequence in a fasta file"""
 
    #Class variables
@@ -118,7 +132,7 @@ class FastaReader(DNAReader):
       fc_seq = "".join.(fc_nucleotide[:])
       return fc_seq
 
-class GCGReader(DNAReader):
+#class GCGReader(DNAReader):
    """A class checking and orginasing an input sequence in a GCG file"""
    
    #Class methods
@@ -130,7 +144,7 @@ class GCGReader(DNAReader):
       fc_seq = "".join(fc_nucleotide[:])
       return fc_seq
 
-class EMBLReader(DNAReader):
+#class EMBLReader(DNAReader):
    """A class checking and orginasing an input sequence in a EMBL file"""
    
    #Class methods
@@ -148,7 +162,7 @@ class EMBLReader(DNAReader):
       fc_seq = "".join(fc_nuc[:])
       return fc_seq
 
-class GenBankReader(DNAReader):
+#class GenBankReader(DNAReader):
    """A class checking and orginasing an input sequence in a GenBank file"""
 
    #Class variables
@@ -164,7 +178,7 @@ class GenBankReader(DNAReader):
       fc_seq = "".join(fc_nucleotide[:])
       return fc_seq
 
-class IGReader(DNAReader):
+#class IGReader(DNAReader):
 
   #Class methods
   
@@ -173,13 +187,13 @@ class IGReader(DNAReader):
      fc_seq = re.findall([GATCN]+,fc)
      return fc_seq
 
-class PlainReader(DNAReader):
+#class PlainReader(DNAReader):
 
    def seq_read(self):
       return self.file.read()
 
 
 if __name__ == '__main__':
-   print(DNA_seq(sys.argv[1]))
+   print(Reader(sys.argv[1]))
 
 
