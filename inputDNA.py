@@ -68,7 +68,7 @@ class DNAReader(Reader):
       return fc_seq
 
    def read_plain(self):
-      return self.file.read().upper()
+      return self.file.read().upper().replace('\n','').replace('\r','')
    #######################################
 
 
