@@ -8,10 +8,19 @@ import re
 
 class Plasmid:
     #class variables
-    restriction_enzymes = {'Cla1' : 'AT^CGAT' , 'BamH1': 'GG^ATCC', 'Bgl II': 'A^GATCT'
-                           , 'Dra1':'TTT^AAA' , 'EcoR1':'G^AATTC' , 'EcoRV':'GAT^ATC'
-                           , 'HindIII':'A^AGCTT' , 'Pst1':'CTGCA^G' , 'Sal I':'G^TCGAC'
-                           , 'SmaI':'CCC^GGG' , 'XmaI':'C^CCGGG'}
+    restriction_enzymes = {
+        'BamH1':   'GG^ATCC',
+        'BglII':   'A^GATCT',
+        'ClaI':    'AT^CGAT',
+        'DraI':    'TTT^AAA',
+        'EcoRI':   'G^AATTC',
+        'EcoRV':   'GAT^ATC',
+        'HindIII': 'A^AGCTT',
+        'PstI':    'CTGCA^G',
+        'SalI':    'G^TCGAC',
+        'SmaI':    'CCC^GGG',
+        'XmaI':    'C^CCGGG',
+    }
     
     #class methods
     def __init__(self, sequence, check_and_fmt=True):
@@ -53,7 +62,7 @@ class Plasmid:
         
     def get_sizes(self, RE_site):
         """Return a list with fragment size."""
-        return [len(frag) for frag in self.cut_(RE_site)]
+        return [len(frag) for frag in self.cut_(RE_site.upper())]
     
     def cut_(self, RE_site):
         """Return a list of plasmid fragments delimited by the
