@@ -8,10 +8,13 @@ import re
 
 class Plasmid:
     #class variables
-    restriction_enzymes = {'Cla1' : 'AT^CGAT' , 'BamH1': 'GG^ATCC', 'Bgl II': 'A^GATCT'
-                           , 'Dra1':'TTT^AAA' , 'EcoR1':'G^AATTC' , 'EcoRV':'GAT^ATC'
-                           , 'HindIII':'A^AGCTT' , 'Pst1':'CTGCA^G' , 'Sal I':'G^TCGAC'
-                           , 'SmaI':'CCC^GGG' , 'XmaI':'C^CCGGG'}
+    restriction_enzymes = {'Cla1' : 'AT^CGAT' , 'BamH1': 'G^GATCC', 'Bgl II': 'A^GATCT'
+                           , 'Dra1':'TTT^AAA' , 'DpnI': 'GA^TC', 'DpnII' : 'GATC'
+                           ,  'EcoR1':'G^AATTC', 'EcoRV':'GAT^ATC', 'HindIII':'A^AGCTT'
+                           , 'I-SceI' : 'AGTTACGCTAGGGATAA^CAGGGTAATATAG' , 'NcoI': 'C^CATGG'
+                           , 'NlaIII' : 'CATG' , 'NotI' : 'GC^GGCCGC' , 'Pst1':'CTGCA^G'
+                           , 'Sal I':'G^TCGAC', 'SmaI':'CCC^GGG' , 'XbaI' : 'T^CTAGA'
+                           , 'XmaI':'C^CCGGG'}
     
     #class methods
     def __init__(self, sequence, check_and_fmt=True):
@@ -30,24 +33,30 @@ class Plasmid:
     def cut(self, RE_site):
         """Return a list of plasmid fragments delimited by the
         specified RE_site, and 'None' if no site is found."""
-        fragments = self.sequence.split(RE_site)
-        n = len(fragments)
+        x = self.restriction_enzymes.get(RE_site)
+        L = x.split('^')
+        y = x.replace('^', '')
+        start = (2*self.sequence).index(y) + len(y)
+        end = start + len(self.sequence) - len(y)
+        self.sequence = (2*self.sequence)[start:end]
+        fragments = self.sequence.split(y)
+        for i in range (len(fragments)):
+            fragments [i] = L[1] + fragments[i] + L[0]
+            n = len(fragments)
         if n == 1:
-            return None
+            return fragments
         else:
             pass
-        fragments[0] = fragments[n-1] + fragments[0]
-        del(fragments[n-1])
-        for g in range (n-1):
-            fragments[g] += RE_site
-        temporary = fragments.pop(0)
-        new_fragments = temporary.split(RE_site)   
-        i = len(temporary.split(RE_site))
-        if i > 1:
-            for m in range (i-1):
-                new_fragments[m] += RE_site
+        temporary = fragments.pop(n-1)
+        fragments[0] = temporary + fragments[0]
+        temporary2 = fragments.pop(0)
+        new_fragments = temporary2.split(y)
+        if len(new_fragments) == 1:
+          #  print 'There is one RE_site'
+            return fragments
         else:
-            fragments[0] = temporary 
+          new_fragments [0] = new_fragments[0] + L[0]
+          new_fragments [1] = L[1] + new_fragments[1]
         fragments = new_fragments + fragments
         return fragments
         
@@ -63,24 +72,30 @@ class Plasmid:
            start = (2*self.sequence).index(RE_site) + len(RE_site)
            end = start + len(self.sequence) - len(RE_site)
            # Use list comprehension to add site sequence to fragments.
-           return [ frag + RE_site for frag in \
+           if len[(2*self.sequence)[start:end].split(RE_site)] %2 == 0 :
+            return [ frag + RE_site in \
+                      (2*self.sequence)[start:end].split(RE_site) ]
+           else:
+                return [ RE_site + frag in \
                       (2*self.sequence)[start:end].split(RE_site) ]
         except ValueError:
            return []
     
-    def RE_name(self, RE_name):
-        # to call the method from the same object: self.cut_(...)
-        x = self.restriction_enzymes[RE_name].replace('^' , '')
-        if self.sequence.find(x) < 0:
-           print "There is no restristion enzyme site in your sequence"
-        else:
-            M = self.restriction_enzymes[RE_name].split('^')
-            y = self.sequence.split(x)
-            #for i in [len(x)]: #self.sequence.len(x)]:
-            y[0] += M[0]
-            y[1] = M[1] + y[1]
-            print y[0]
-            print y[1]
+    def RE_name(self, RE_site):
+        self.cut_(self, RE_site)# to call the method from the same object: self.cut_(...)
+        
+        
+    def separate(self, RE_site):
+        #for RE_site in restriction_enzymes:
+         #   print self.RE_site()
+        x= self.restriction_enzymes.get(RE_site)
+        L= x.split('^')
+       # self.cut(self, RE_site)
+        print L
+        
+       # L[0], L[1]
+      
         return None
+        
     
    
