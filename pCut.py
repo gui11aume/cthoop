@@ -10,7 +10,7 @@ class Plasmid:
     #class variables
     restriction_enzymes = {'Cla1' : 'AT^CGAT' , 'BamH1': 'G^GATCC', 'Bgl II': 'A^GATCT'
                            , 'Dra1':'TTT^AAA' , 'DpnI': 'GA^TC', 'DpnII' : 'GATC'
-                           ,  'EcoR1':'G^AATTC', 'EcoRV':'GAT^ATC', 'HindIII':'A^AGCTT'
+                           , 'EcoR1':'G^AATTC', 'EcoRV':'GAT^ATC', 'HindIII':'A^AGCTT'
                            , 'I-SceI' : 'AGTTACGCTAGGGATAA^CAGGGTAATATAG' , 'NcoI': 'C^CATGG'
                            , 'NlaIII' : 'CATG' , 'NotI' : 'GC^GGCCGC' , 'Pst1':'CTGCA^G'
                            , 'Sal I':'G^TCGAC', 'SmaI':'CCC^GGG' , 'XbaI' : 'T^CTAGA'
@@ -66,6 +66,19 @@ class Plasmid:
     
     def cut_(self, RE_site):
         """Return a list of plasmid fragments delimited by the
+        specified RE_site, and 'None' if no site is found."""
+        try:
+           # Change plasmid offset (early exit if no RE site found).
+           start = (2*self.sequence).index(RE_site) + len(RE_site)
+           end = start + len(self.sequence) - len(RE_site)
+           # Use list comprehension to add site sequence to fragments.
+           return [ frag + RE_site for frag in \
+                      (2*self.sequence)[start:end].split(RE_site) ]
+        except ValueError:
+           return []
+    
+    def cut_2(self, RE_site):
+        """Return a list of plasmid fragments delimited by the
         specified RE_site, and empty list if no site is found."""
         try:
            # Change plasmid offset (early exit if no RE site found).
@@ -96,6 +109,9 @@ class Plasmid:
        # L[0], L[1]
       
         return None
+<<<<<<< HEAD
         
     
    
+=======
+>>>>>>> fc8806c65faabe216cc77dbcaf36d8f8e75d668b
