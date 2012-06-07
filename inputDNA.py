@@ -1,69 +1,94 @@
 # -*- coding:utf-8 -*-
 
+import sys
 import re
 
 class Reader():
    def __init__(self, file_name):
       self.file = open(file_name)
-      self.check()
 
    def __del__(self):
       """Ensure that file is properly closed when the Reader
       instance is destroyed."""
       self.file.close()
-
-   def check(self):
-      """Implemented only in subclasses."""
-      pass
   
-   def readon(self):
-      return self.file.read()
-
    def read(self):
       self.file.seek(0)
-      return self.readon()
-
+      return self.file.read()
 
 
 class DNAReader(Reader):
    """Implements a 'check' method to make sure that the content
    of the file is a pure DNA sequence."""
 
-   def readon(self):
-      return self.file.read().replace("\n", "").replace("\r", "").upper()
+   def __init__(self, file_name):
+      Reader.__init__(self, file_name)
+      self.selection()
 
-   def check(self):
-      if re.search('[^GATCN]', self.read()):
-         raise Exception ('Not a DNA sequence')
-
-    
-class FastaReader(DNAReader):
-   """A class checking a input sequence in a fasta file"""
-
-   #Class variables
-   correct_nucleotide = "ATCGN"
-   
-   #Class methods
-   
-   def read(self):
-      """clean the head"""
+   def selection(self):
+      """Categorise the correct file format regarding the given sequence."""
       self.file.seek(0)
-      header = self.file.readline()
-      if header[0] == ">":
-         return self.readon()
+      start = self.file.readline().rstrip().upper()
+      if start[0] == ">":
+         self.file_type = "fasta"
+      elif start[0:1] == "ID":
+         self.file_type = "embl_gcg"
+      elif start[0:5] == "LOCUS":
+         self.file_type = "genbank"
+      elif start[0] == ";":
+         self.file_type = "ig"
+      elif not re.search('[^GATCN]', start):
+         self.file_type = "plain"
       else:
-         raise Exception("It is not a fasta file!")
+         self.file_type = None
+      return self.file_type
 
-   def seq_check(self):
-      """check whether a sequence containing reasonable letters"""
-      read_seq = self.read()
-      for letter in read_seq:
-         if not letter in self.correct_nucleotide:
-            print "The given sequence contains wrong nucleotides."
-      return
+   def filter_nt(self, string):
+      return ''.join(re.findall('[GATCN]+', string.upper()))
+ 
+
+   #######################################
+   def read_fasta(self):
+      # Skip header.
+      self.file.readline()
+      return self.filter_nt(self.file.read())
+
+   def read_embl_gcg(self):
+      fcontent = self.file.read()
+      return self.filter_nt(fcontent[fcontent.index("SQ")+2:])
+
+   def read_genbank(self):
+      fcontent = self.file.read()
+      # Substring from after "ORIGIN" till end of file.
+      return self.filter_nt(fcontent[fcontent.index('ORIGIN')+6:])
+
+   def read_ig(self):
+      fc = self.file.read().replace(";","").repace("comment","").upper()
+      fc_seq = re.findall('[GATCN]+', fc)
+      return fc_seq
+
+   def read_plain(self):
+      return self.file.read().upper().replace('\n','').replace('\r','')
+   #######################################
+
+
+   def read(self):
+      self.file.seek(0)
+      if self.file_type == "fasta":
+         return self.read_fasta()
+      elif self.file_type == "embl_gcg":
+         return self.read_embl_gcg()
+      elif self.file_type == "genbank":
+         return self.read_genbank()
+      elif self.file_type == "ig":
+         return self.read_ig()
+      elif self.file_type == "plain":
+         return self.read_plain()
+      else:
+         raise Exception('unknown file format')
 
 
 if __name__ == '__main__':
-   print(DNA_seq(sys.argv[1]))
+   print(DNAReader(sys.argv[1]).read())
 
 

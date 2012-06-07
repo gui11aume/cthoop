@@ -8,13 +8,27 @@ import re
 
 class Plasmid:
     #class variables
-    restriction_enzymes = {'Cla1' : 'AT^CGAT' , 'BamH1': 'G^GATCC', 'Bgl II': 'A^GATCT'
-                           , 'Dra1':'TTT^AAA' , 'DpnI': 'GA^TC', 'DpnII' : 'GATC'
-                           , 'EcoR1':'G^AATTC', 'EcoRV':'GAT^ATC', 'HindIII':'A^AGCTT'
-                           , 'I-SceI' : 'AGTTACGCTAGGGATAA^CAGGGTAATATAG' , 'NcoI': 'C^CATGG'
-                           , 'NlaIII' : 'CATG' , 'NotI' : 'GC^GGCCGC' , 'Pst1':'CTGCA^G'
-                           , 'Sal I':'G^TCGAC', 'SmaI':'CCC^GGG' , 'XbaI' : 'T^CTAGA'
-                           , 'XmaI':'C^CCGGG'}
+    restriction_enzymes = {
+        'ClaI' :    'AT^CGAT',
+        'BamHI':    'G^GATCC',
+        'BglII':    'A^GATCT',
+        'DraI':     'TTT^AAA',
+        'DpnI':     'GA^TC',
+        'DpnII' :   '^GATC',
+        'EcoRI':    'G^AATTC',
+        'EcoRV':    'GAT^ATC',
+        'HindIII':  'A^AGCTT',
+        #'I-SceI' :  'AGTTACGCTAGGGATAA^CAGGGTAATATAG',
+        'NcoI':     'C^CATGG',
+        'NlaIII' :  'CATG',
+        'NotI' :    'GC^GGCCGC',
+        'PstI':     'CTGCA^G',
+        'SalI':     'G^TCGAC',
+        'SmaI':     'CCC^GGG',
+        'XbaI' :    'T^CTAGA',
+        'XmaI':     'C^CCGGG',
+    }
+
     
     #class methods
     def __init__(self, sequence, check_and_fmt=True):
@@ -30,39 +44,49 @@ class Plasmid:
         else:
            return sequence
         
-    def cut(self, RE_site):
+    def cut(self, RE_name):
         """Return a list of plasmid fragments delimited by the
         specified RE_site, and 'None' if no site is found."""
-        x = self.restriction_enzymes.get(RE_site)
-        L = x.split('^')
-        y = x.replace('^', '')
-        start = (2*self.sequence).index(y) + len(y)
-        end = start + len(self.sequence) - len(y)
-        self.sequence = (2*self.sequence)[start:end]
-        fragments = self.sequence.split(y)
-        for i in range (len(fragments)):
-            fragments [i] = L[1] + fragments[i] + L[0]
-            n = len(fragments)
-        if n == 1:
+        RE_site_w_cut = self.restriction_enzymes[RE_name]
+        RE_site_wo_cut = RE_site_w_cut.replace('^', '')
+        (RE_left, RE_right) = RE_site_w_cut.split('^')
+        # Change sequence offset.
+        try:
+            start = (2*self.sequence).index(RE_site_wo_cut) + len(RE_site_wo_cut)
+            end = start + len(self.sequence) - len(RE_site_wo_cut)
+            sequence = (2*self.sequence)[start:end] 
+            fragments = sequence.split(RE_site_wo_cut)
+            for i in range (len(fragments)):
+                fragments[i] = RE_right + fragments[i] + RE_left
             return fragments
-        else:
-            pass
-        temporary = fragments.pop(n-1)
-        fragments[0] = temporary + fragments[0]
-        temporary2 = fragments.pop(0)
-        new_fragments = temporary2.split(y)
-        if len(new_fragments) == 1:
-          #  print 'There is one RE_site'
-            return fragments
-        else:
-          new_fragments [0] = new_fragments[0] + L[0]
-          new_fragments [1] = L[1] + new_fragments[1]
-        fragments = new_fragments + fragments
-        return fragments
+        except ValueError:
+            return []
+    
+        #return [RE_right + frag + RE_left for frag in sequence.split(RE_site_wo_cut)]
+        #n = len(fragments)
+            
+            
+            
+        #if n == 1:
+        #    return fragments
+        #else:
+        #    pass
+        #temporary = fragments.pop(n-1)
+        #fragments[0] = temporary + fragments[0]
+        #temporary2 = fragments.pop(0)
+        #new_fragments = temporary2.split(y)
+        #if len(new_fragments) == 1:
+        #  #  print 'There is one RE_site'
+        #    return fragments
+        #else:
+        #  new_fragments [0] = new_fragments[0] + L[0]
+        #  new_fragments [1] = L[1] + new_fragments[1]
+        #fragments = new_fragments + fragments
+        #return fragments
         
     def get_sizes(self, RE_site):
         """Return a list with fragment size."""
-        return [len(frag) for frag in self.cut_(RE_site)]
+        return [len(frag) for frag in self.cut_(RE_site.upper())]
     
     def cut_(self, RE_site):
         """Return a list of plasmid fragments delimited by the
@@ -76,6 +100,7 @@ class Plasmid:
                       (2*self.sequence)[start:end].split(RE_site) ]
         except ValueError:
            return []
+    
     
     def cut_2(self, RE_site):
         """Return a list of plasmid fragments delimited by the
@@ -94,10 +119,7 @@ class Plasmid:
         except ValueError:
            return []
     
-    def RE_name(self, RE_site):
-        self.cut_(self, RE_site)# to call the method from the same object: self.cut_(...)
-        
-        
+
     def separate(self, RE_site):
         #for RE_site in restriction_enzymes:
          #   print self.RE_site()
@@ -109,9 +131,3 @@ class Plasmid:
        # L[0], L[1]
       
         return None
-<<<<<<< HEAD
-        
-    
-   
-=======
->>>>>>> fc8806c65faabe216cc77dbcaf36d8f8e75d668b
