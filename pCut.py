@@ -1,8 +1,8 @@
-# @Olivera: this is your file. Change the name the way you want.
-# I suggest you start by creating a 'Plasmid' class that contains
-# the basic information about a plamid (mostly the sequence).
-# You can write a 'cut(self, RE_site)' method that returns a
-# list with the length of the fragments.
+# -*- coding:utf-8 -*-
+
+# TODO:
+# 1. Allow user to pass sequence OR RE name.
+# 2. Allow non palindromic RE sites (perhaps change function cut)
 
 import re
 
@@ -44,22 +44,44 @@ class Plasmid:
         else:
            return sequence
         
-    def cut(self, RE_name):
-        """Return a list of plasmid fragments delimited by the
-        specified RE_site, and 'None' if no site is found."""
-        RE_site_w_cut = self.restriction_enzymes[RE_name]
+    def cut(self, arg):
+        """
+        Arguments:
+            'describe the arguments it takes.'
+           ...
+        Return:
+           'describe what it returns.'
+           ...
+        Allow user to ask if there is any RE site independently of
+        having this enzyme name in the dictionary.
+        """
+        
+        #########################################
+        ## Arguments processing
+        #########################################
+        try:
+            # Try to get 'arg' from RE dictionary.
+            RE_site_w_cut = self.restriction_enzymes[arg]
+        except KeyError:
+            # If not there, take the input as RE sequence.
+            RE_site_w_cut = arg
         RE_site_wo_cut = RE_site_w_cut.replace('^', '')
         (RE_left, RE_right) = RE_site_w_cut.split('^')
-        # Change sequence offset.
+
+        #########################################
+        ## Cut plasmid sequence on RE sites
+        #########################################
         try:
+            # Change sequence offset.
             start = (2*self.sequence).index(RE_site_wo_cut) + len(RE_site_wo_cut)
             end = start + len(self.sequence) - len(RE_site_wo_cut)
-            sequence = (2*self.sequence)[start:end] 
+            sequence = (2*self.sequence)[start:end]
             fragments = sequence.split(RE_site_wo_cut)
             for i in range (len(fragments)):
                 fragments[i] = RE_right + fragments[i] + RE_left
             return fragments
         except ValueError:
+            # No site found. Return empty list.
             return []
     
         #return [RE_right + frag + RE_left for frag in sequence.split(RE_site_wo_cut)]
