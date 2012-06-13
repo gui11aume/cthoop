@@ -9,9 +9,9 @@ import pCut
 
 if __name__ == '__main__':
    # Gather user parameters.
-   (plasmid_file, RE_site) = sys.argv[1:]
+   (plasmid_file, arg) = sys.argv[1:]
    input_seq = inputDNA.DNAReader(plasmid_file).read()
-   sizes = sorted(pCut.Plasmid(input_seq).get_sizes(RE_site), reverse=True)
+   sizes = sorted(pCut.Plasmid(input_seq).get_sizes(arg), reverse=True)
    if sizes:
       output = prettytable.PrettyTable()
       output.add_column('Fragment', range(1, 1+len(sizes)))
