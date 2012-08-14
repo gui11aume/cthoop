@@ -3,15 +3,32 @@
 
 import sys
 import prettytable
+import argparse
 
 import inputDNA
 import pCut
 
 if __name__ == '__main__':
    # Gather user parameters.
-   (plasmid_file, arg) = sys.argv[1:]
-   input_seq = inputDNA.DNAReader(plasmid_file).read()
-   sizes = sorted(pCut.Plasmid(input_seq).get_sizes(arg), reverse=True)
+   parser = argparse.ArgumentParser(
+       prog='cthoop',
+       description='Cut The Hell Out Of Plasmids.'
+   )
+   parser.add_argument(
+       'plasmid',
+       help = 'file containing the plasmid sequence'
+   )
+   parser.add_argument(
+       'RE',
+       nargs='+',
+       help = 'restriction enzyme or sequence to cut the plasmid'
+   )
+   args = parser.parse_args()
+   plasmid = args.plasmid
+   RE = args.RE
+
+   input_seq = inputDNA.DNAReader(plasmid).read()
+   sizes = sorted(pCut.Plasmid(input_seq).get_sizes(RE), reverse=True)
    if sizes:
       output = prettytable.PrettyTable()
       output.add_column('Fragment', range(1, 1+len(sizes)))
